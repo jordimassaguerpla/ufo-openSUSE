@@ -5,6 +5,7 @@ import sys
 from xml.dom import minidom
 
 histogram={}
+package_counts = {}
 
 parser = argparse.ArgumentParser(description="Extract data from update info xml file")
 parser.add_argument('filename')
@@ -60,6 +61,10 @@ for update in updates:
     # Filter duplicates. Each package is released for multiple architectures, but we are not insterested on that
     if package_name not in package_names:
       histogram[int(update_Year)][int(update_Month)] += 1
+      if package_name not in package_counts.keys():
+        package_counts[package_name] = 1
+      else:
+        package_counts[package_name] += 1
       total_count += 1
 
 n = 0
@@ -78,4 +83,6 @@ for key in histogram.keys():
     sys.stdout.flush()
 print("Total: " + str(total_count))
 print("Avg: " + str(total_count / n))
-
+sorted_d = sorted(((value, key) for (key,value) in package_counts.items()), reverse=True)
+print("Package counts ")
+print(sorted_d)
