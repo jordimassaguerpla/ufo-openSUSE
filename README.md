@@ -16,6 +16,10 @@ and run
 
 python histogram.py update-info.xml whitelist.json
 
+Example output
+
+https://github.com/jordimassaguerpla/ufo-openSUSE/blob/master/example_output.png
+
 More will come, but for now we have the histogram
 
 Enjoy
