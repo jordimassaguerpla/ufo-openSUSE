@@ -18,7 +18,7 @@ python histogram.py update-info.xml whitelist.json
 
 Example output
 
-https://github.com/jordimassaguerpla/ufo-openSUSE/blob/master/example_output.png
+![Example output](example_output.png?raw=true "Example output")
 
 More will come, but for now we have the histogram
 
