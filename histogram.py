@@ -8,6 +8,7 @@ histogram={}
 package_counts = {}
 
 parser = argparse.ArgumentParser(description="Extract data from update info xml file")
+parser.add_argument('--security', help="filter only security updates", action="store_true")
 parser.add_argument('filename')
 parser.add_argument('whitelist', help="whitelist json file")
 
@@ -27,12 +28,15 @@ args = parser.parse_args()
 filename = args.filename
 with open(args.whitelist) as json_file:
   whitelist = json.load(json_file)
+filter_security = args.security
 
 xmldoc = minidom.parse(filename)
 updates = xmldoc.getElementsByTagName("update")
 for update in updates:
   update_id = update.getElementsByTagName("id")[0].firstChild.data
   update_type = update.attributes["type"].value
+  if filter_security and update_type != "security":
+    continue
   update_severity = update.getElementsByTagName("severity")[0].firstChild.data
   update_date = update.getElementsByTagName("issued")[0].attributes["date"].value
   update_date = datetime.fromtimestamp(float(update_date))
@@ -60,6 +64,7 @@ for update in updates:
       continue
     # Filter duplicates. Each package is released for multiple architectures, but we are not insterested on that
     if package_name not in package_names:
+      package_names.append(package_name)
       histogram[int(update_Year)][int(update_Month)] += 1
       if package_name not in package_counts.keys():
         package_counts[package_name] = 1
@@ -76,7 +81,7 @@ for key in histogram.keys():
     sys.stdout.write(str(key).zfill(4) + " " + str(key2).zfill(2) + " " + str(histogram[key][key2]).zfill(5))
     points = histogram[key][key2] *1000 / total_count
     sys.stdout.write('\x1b[6;30;42m')
-    for i in range(points):
+    for i in range(int(points)):
       sys.stdout.write(" ")
     sys.stdout.write('\x1b[0m')
     sys.stdout.write("\n")
